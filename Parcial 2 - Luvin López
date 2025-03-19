@@ -1,0 +1,82 @@
+Parte I
+1. Falso
+2. Verdadero
+3. Verdadero
+4. Verdadero
+
+Parte II
+1. b
+2. c
+3. c
+
+Parte III
+El bug del código es el método descripcion(), no existe en ninguna de las clases definidas
+
+Parte IV
+class Cliente:
+    def __init__(self, cedula, edad, sexo, tiene_seguro, tipo_estudio):
+        self.cedula = cedula
+        self.edad = edad
+        self.sexo = sexo  # "F" para femenino, "M" para masculino
+        self.tiene_seguro = tiene_seguro
+        self.tipo_estudio = tipo_estudio
+
+def calcular_monto(edad, tipo_estudio, tiene_seguro, sexo):
+    precios = {
+        "Ultrasonido": 8.90 + (edad * 10),
+        "Tomografía": 12.64 + (edad * 10),
+        "Resonancia": 15.60 + (edad * 10),
+    }
+    monto_base = precios[tipo_estudio]
+    
+    # Aplicar descuento por seguro
+    if tiene_seguro:
+        monto_base *= 0.2  # 80% de descuento
+    
+    # Descuentos adicionales por edad y sexo
+    if sexo == "F" and edad > 70:
+        monto_base *= 0.8  # 20% de descuento adicional
+    elif sexo == "M" and edad > 80:
+        monto_base *= 0.85  # 15% de descuento adicional
+    
+    return round(monto_base, 2)
+
+def generar_recibo(cliente):
+    monto = calcular_monto(cliente.edad, cliente.tipo_estudio, cliente.tiene_seguro, cliente.sexo)
+    recibo = f"""
+    Recibo:
+    Cédula: {cliente.cedula}
+    Edad: {cliente.edad}
+    Sexo: {cliente.sexo}
+    Estudio: {cliente.tipo_estudio}
+    Seguro: {'Sí' if cliente.tiene_seguro else 'No'}
+    Monto a Pagar: ${monto}
+    """
+    print(recibo)
+    return monto
+
+def resumen_diario(clientes):
+    conteo_estudios = {"Ultrasonido": 0, "Tomografía": 0, "Resonancia": 0}
+    total_facturado = 0
+    
+    for cliente in clientes:
+        conteo_estudios[cliente.tipo_estudio] += 1
+        total_facturado += calcular_monto(cliente.edad, cliente.tipo_estudio, cliente.tiene_seguro, cliente.sexo)
+    
+    print("\nResumen Diario:")
+    for estudio, cantidad in conteo_estudios.items():
+        print(f"{estudio}: {cantidad} clientes")
+    print(f"Monto Total Facturado: ${round(total_facturado, 2)}")
+
+# Ejemplo de uso:
+clientes = []
+clientes.append(Cliente("945678", 75, "F", True, "Ultrasonido"))
+clientes.append(Cliente("654321", 82, "M", False, "Tomografía"))
+clientes.append(Cliente("11923344", 50, "F", True, "Resonancia"))
+
+# Generar recibos para cada cliente
+for cliente in clientes:
+    generar_recibo(cliente)
+
+# Mostrar resumen diario
+resumen_diario(clientes)
